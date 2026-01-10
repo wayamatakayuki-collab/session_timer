@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test Timer</title>
+    <title>学力検査用モニタータイマー</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@500;700&family=Noto+Sans+JP:wght@500;700&display=swap');
@@ -92,8 +92,8 @@
         }
 
         .custom-checkbox {
-            width: 20px;
-            height: 20px;
+            width: 18px;
+            height: 18px;
             cursor: pointer;
             accent-color: #10b981;
         }
@@ -106,6 +106,13 @@
             padding: 2px 8px;
             font-weight: bold;
         }
+
+        .notify-input-disabled {
+            color: #64748b !important;
+            background-color: rgba(15, 23, 42, 0.4) !important;
+            border-color: #475569 !important;
+            cursor: not-allowed;
+        }
     </style>
 </head>
 <body class="h-screen flex flex-col items-center justify-between relative">
@@ -113,7 +120,12 @@
     <!-- 設定パネル -->
     <div id="settingsModal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 hidden">
         <div class="bg-slate-800 p-8 rounded-lg border border-slate-600 w-full max-w-6xl max-h-[90vh] flex flex-col">
-            <h2 class="text-2xl font-bold mb-4 text-center pb-4 border-b border-slate-700">詳細設定</h2>
+            <div class="flex justify-between items-center mb-4 pb-4 border-b border-slate-700">
+                <h2 class="text-2xl font-bold">詳細設定</h2>
+                <div class="text-xs text-amber-400 font-bold bg-amber-950/40 px-3 py-1 rounded border border-amber-700/50">
+                    ※時間が「0」に設定されている部は、名称も通知文もメイン画面に表示されません。
+                </div>
+            </div>
             
             <div id="settingsContainer" class="flex-1 overflow-y-auto space-y-4 pr-2 text-slate-200">
                 <!-- 通知の基本設定 -->
@@ -128,7 +140,7 @@
                         </div>
                     </div>
                     <div class="text-[10px] text-slate-400">
-                        ※通知文は最大13文字まで入力可能です。各部ごとのチェックボックスで通知の有無を切り替えられます。
+                        ※通知文は最大13文字。通知文右のチェックで各部の通知ON/OFFを切り替えます。
                     </div>
                 </div>
 
@@ -146,7 +158,7 @@
         ---
     </div>
 
-    <!-- 教科名表示 (重なりを防ぐために位置を調整) -->
+    <!-- 教科名表示 -->
     <div class="absolute top-20 left-10 z-20">
         <h1 id="displaySubject" class="text-[4vw] font-bold text-slate-300 tracking-wider leading-none border-l-8 border-emerald-500 pl-4">---</h1>
     </div>
@@ -186,7 +198,7 @@
         </div>
 
         <div class="flex justify-end items-center">
-            <span class="text-[16px] text-slate-600 font-medium tracking-tight select-none hover:text-slate-500 transition cursor-default">
+            <span class="text-[10px] text-slate-600 font-medium tracking-tight select-none hover:text-slate-500 transition cursor-default">
                 © 2026 Takayuki WAYAMA. All rights reserved.
             </span>
         </div>
@@ -200,14 +212,14 @@
         const defaultLabels = ["第1部", "第2部", "第3部", "第4部", "第5部"];
         const defaultNotifyText = "に進んでください";
         const defaultData = [
-            { name: "国語", parts: [0, 0, 0, 0, 0], partLabels: [...defaultLabels], partNotifies: defaultLabels.map(l => l + defaultNotifyText), partNotifyStates: [false, true, true, true, true] },
-            { name: "社会", parts: [0, 0, 0, 0, 0], partLabels: [...defaultLabels], partNotifies: defaultLabels.map(l => l + defaultNotifyText), partNotifyStates: [false, true, true, true, true] },
-            { name: "算数", parts: [0, 0, 0, 0, 0], partLabels: [...defaultLabels], partNotifies: defaultLabels.map(l => l + defaultNotifyText), partNotifyStates: [false, true, true, true, true] },
-            { name: "理科", parts: [0, 0, 0, 0, 0], partLabels: [...defaultLabels], partNotifies: defaultLabels.map(l => l + defaultNotifyText), partNotifyStates: [false, true, true, true, true] },
-            { name: "外国語", parts: [0, 0, 0, 0, 0], partLabels: [...defaultLabels], partNotifies: defaultLabels.map(l => l + defaultNotifyText), partNotifyStates: [false, true, true, true, true] }
+            { name: "国語", parts: [0, 0, 0, 0, 0], partLabels: [...defaultLabels], partNotifies: defaultLabels.map(l => l + defaultNotifyText), partNotifyStates: [false, false, false, false, false] },
+            { name: "社会", parts: [0, 0, 0, 0, 0], partLabels: [...defaultLabels], partNotifies: defaultLabels.map(l => l + defaultNotifyText), partNotifyStates: [false, false, false, false, false] },
+            { name: "算数", parts: [0, 0, 0, 0, 0], partLabels: [...defaultLabels], partNotifies: defaultLabels.map(l => l + defaultNotifyText), partNotifyStates: [false, false, false, false, false] },
+            { name: "理科", parts: [0, 0, 0, 0, 0], partLabels: [...defaultLabels], partNotifies: defaultLabels.map(l => l + defaultNotifyText), partNotifyStates: [false, false, false, false, false] },
+            { name: "外国語", parts: [0, 0, 0, 0, 0], partLabels: [...defaultLabels], partNotifies: defaultLabels.map(l => l + defaultNotifyText), partNotifyStates: [false, false, false, false, false] }
         ];
 
-        let examData = JSON.parse(localStorage.getItem('exam_data_v8')) || defaultData;
+        let examData = JSON.parse(localStorage.getItem('exam_data_v9')) || defaultData;
         let notifyDuration = JSON.parse(localStorage.getItem('exam_notify_duration')) ?? 5;
 
         let currentSubjectIdx = 0;
@@ -249,7 +261,7 @@
             const currentLabels = examData[currentSubjectIdx].partLabels || defaultLabels;
             
             partTabs.innerHTML = currentParts.map((t, i) => {
-                if (i > 0 && t === 0) return '';
+                if (t === 0) return '';
                 return `
                     <button onclick="selectPart(${i})" class="part-tab px-10 py-3 rounded-md border-2 border-slate-600 text-4xl font-bold transition ${i === currentPartIdx ? 'active' : 'text-slate-500 bg-black/20'}">
                         ${currentLabels[i]}
@@ -258,10 +270,27 @@
             }).join('');
         }
 
+        function updateNotifyInputState(subjectIdx, partIdx) {
+            const checkbox = document.getElementById(`edit-notify-state-${subjectIdx}-${partIdx}`);
+            const input = document.getElementById(`edit-notify-${subjectIdx}-${partIdx}`);
+            if (checkbox && input) {
+                if (checkbox.checked) {
+                    input.disabled = false;
+                    input.classList.remove('notify-input-disabled');
+                } else {
+                    input.disabled = true;
+                    input.classList.add('notify-input-disabled');
+                }
+            }
+        }
+
         function bulkToggleNotify(subjectIdx, state) {
             for (let pi = 1; pi < 5; pi++) {
-                const el = document.getElementById(`edit-notify-state-${subjectIdx}-${pi}`);
-                if (el) el.checked = state;
+                const checkbox = document.getElementById(`edit-notify-state-${subjectIdx}-${pi}`);
+                if (checkbox) {
+                    checkbox.checked = state;
+                    updateNotifyInputState(subjectIdx, pi);
+                }
             }
         }
 
@@ -281,26 +310,37 @@
                         </div>
                     </div>
                     <div class="grid grid-cols-5 gap-3">
-                        ${[0,1,2,3,4].map(pi => `
+                        ${[0,1,2,3,4].map(pi => {
+                            const isChecked = s.partNotifyStates && s.partNotifyStates[pi];
+                            return `
                             <div class="space-y-1 bg-slate-800/50 p-2 rounded border border-slate-700/50 flex flex-col justify-between h-full">
                                 <div>
-                                    <div class="flex items-center justify-between">
-                                        <label class="block text-[10px] text-slate-400">名称</label>
-                                        ${pi > 0 ? `<input type="checkbox" id="edit-notify-state-${i}-${pi}" class="custom-checkbox w-3 h-3" ${s.partNotifyStates && s.partNotifyStates[pi] ? 'checked' : ''} title="通知の有無">` : ''}
+                                    <div class="mb-1">
+                                        <label class="block text-[10px] text-slate-400 font-bold mb-1">${pi+1}つ目の設定</label>
+                                        <div class="flex items-center gap-2 mb-1">
+                                            <label class="text-[9px] text-slate-500 whitespace-nowrap">名称</label>
+                                            <input type="text" id="edit-label-${i}-${pi}" value="${s.partLabels ? s.partLabels[pi] : defaultLabels[pi]}" class="w-full bg-slate-900 border border-slate-500 rounded px-1 py-1 text-white text-[10px]">
+                                        </div>
                                     </div>
-                                    <input type="text" id="edit-label-${i}-${pi}" value="${s.partLabels ? s.partLabels[pi] : defaultLabels[pi]}" class="w-full bg-slate-900 border border-slate-500 rounded px-1 py-1 text-white text-[10px]">
                                     
                                     <div class="${pi === 0 ? 'invisible opacity-0' : ''} h-12">
-                                        <label class="block text-[10px] text-slate-400 mt-2">通知文 (最大13文字)</label>
-                                        <input type="text" id="edit-notify-${i}-${pi}" maxlength="13" value="${s.partNotifies ? s.partNotifies[pi] : (s.partLabels[pi] + defaultNotifyText)}" class="w-full bg-slate-900 border border-slate-500 rounded px-1 py-1 text-white text-[10px]" ${pi === 0 ? 'disabled' : ''}>
+                                        <div class="flex items-center justify-between mb-1">
+                                            <label class="text-[9px] text-slate-500">通知文</label>
+                                            <input type="checkbox" id="edit-notify-state-${i}-${pi}" onchange="updateNotifyInputState(${i}, ${pi})" class="custom-checkbox flex-shrink-0" ${isChecked ? 'checked' : ''} title="通知を有効にする" ${pi === 0 ? 'disabled' : ''}>
+                                        </div>
+                                        <input type="text" id="edit-notify-${i}-${pi}" maxlength="13" value="${s.partNotifies ? s.partNotifies[pi] : (s.partLabels[pi] + defaultNotifyText)}" 
+                                            class="w-full bg-slate-900 border border-slate-500 rounded px-1 py-1 text-white text-[10px] ${!isChecked ? 'notify-input-disabled' : ''}" 
+                                            ${pi === 0 || !isChecked ? 'disabled' : ''}>
                                     </div>
                                 </div>
-                                <div>
-                                    <label class="block text-[10px] text-slate-400 mt-2">時間(分)</label>
-                                    <input type="number" id="edit-time-${i}-${pi}" value="${s.parts[pi]}" class="w-full number-input w-full text-center">
+                                <div class="pt-2 border-t border-slate-700 mt-1">
+                                    <div class="flex items-center gap-2 w-full">
+                                        <span class="text-[10px] text-emerald-400 font-bold whitespace-nowrap">時間(分)</span>
+                                        <input type="number" id="edit-time-${i}-${pi}" value="${s.parts[pi]}" class="w-full number-input text-center flex-1 min-w-0">
+                                    </div>
                                 </div>
                             </div>
-                        `).join('')}
+                        `}).join('')}
                     </div>
                 </div>
             `).join('');
@@ -388,7 +428,7 @@
             const subject = examData[currentSubjectIdx];
             const currentParts = subject.parts;
             const currentNotifies = subject.partNotifies || [];
-            const currentNotifyStates = subject.partNotifyStates || [false, true, true, true, true];
+            const currentNotifyStates = subject.partNotifyStates || [false, false, false, false, false];
             
             let nextPartIdx = -1;
             for (let i = currentPartIdx + 1; i < currentParts.length; i++) {
@@ -396,7 +436,6 @@
             }
 
             if (nextPartIdx !== -1) {
-                // その部の通知設定がONの場合のみ表示
                 if (currentNotifyStates[nextPartIdx]) {
                     const msg = currentNotifies[nextPartIdx] || (subject.partLabels[nextPartIdx] + defaultNotifyText);
                     showToast(msg, notifyDuration * 1000);
@@ -457,7 +496,7 @@
                     return document.getElementById(`edit-notify-state-${i}-${pi}`).checked;
                 })
             }));
-            localStorage.setItem('exam_data_v8', JSON.stringify(examData));
+            localStorage.setItem('exam_data_v9', JSON.stringify(examData));
 
             notifyDuration = parseInt(notifyDurInput.value) || 5;
             localStorage.setItem('exam_notify_duration', JSON.stringify(notifyDuration));
