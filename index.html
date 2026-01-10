@@ -57,8 +57,9 @@
             pointer-events: none;
             transform: translate(-50%, -50%) scale(0.8);
             box-shadow: 0 40px 100px rgba(0,0,0,0.9);
-            width: 85vw;
-            max-width: 1400px;
+            width: 90vw;
+            max-width: 1600px;
+            font-size: 7.5vw;
         }
         #autoNextToast.visible {
             opacity: 1;
@@ -96,6 +97,16 @@
             cursor: pointer;
             accent-color: #10b981;
         }
+
+        /* 数値入力欄のスタイル */
+        .number-input {
+            background-color: #f1f5f9; /* slate-100 */
+            color: #0f172a; /* slate-900 */
+            border: 1px solid #94a3b8; /* slate-400 */
+            border-radius: 4px;
+            padding: 2px 8px;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body class="h-screen flex flex-col items-center justify-between relative">
@@ -106,16 +117,29 @@
             <h2 class="text-2xl font-bold mb-4 text-center pb-4 border-b border-slate-700">詳細設定</h2>
             
             <div id="settingsContainer" class="flex-1 overflow-y-auto space-y-4 pr-2 text-slate-200">
-                <div class="bg-slate-700/60 p-4 rounded border border-emerald-500/30 mb-6 flex items-center justify-between">
-                    <div>
-                        <h3 class="font-bold text-emerald-400">通知設定</h3>
-                        <p class="text-sm text-slate-400">次の部への移行時に、設定した「通知文」を表示する</p>
+                <!-- 全体通知設定 -->
+                <div class="bg-slate-700/60 p-4 rounded border border-emerald-500/30 mb-6 flex flex-wrap items-center justify-between gap-4">
+                    <div class="flex items-center gap-8">
+                        <div>
+                            <h3 class="font-bold text-emerald-400">通知の有効化</h3>
+                            <div class="flex items-center gap-3 mt-1">
+                                <input type="checkbox" id="edit-notify-toggle" class="custom-checkbox">
+                                <span class="text-sm">通知を表示する</span>
+                            </div>
+                        </div>
+                        <div class="border-l border-slate-600 pl-8">
+                            <h3 class="font-bold text-emerald-400">表示時間</h3>
+                            <div class="flex items-center gap-2 mt-1">
+                                <input type="number" id="edit-notify-duration" min="1" max="30" class="w-16 number-input text-center">
+                                <span class="text-sm">秒間表示する</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="flex items-center gap-3">
-                        <span class="text-sm">通知を表示する</span>
-                        <input type="checkbox" id="edit-notify-toggle" class="custom-checkbox">
+                    <div class="text-[10px] text-slate-400">
+                        ※通知文は最大13文字まで入力可能です。
                     </div>
                 </div>
+
                 <div id="subjectSettingsList" class="space-y-4"></div>
             </div>
 
@@ -125,37 +149,36 @@
         </div>
     </div>
 
-    <!-- 通知 -->
-    <div id="autoNextToast" class="fixed top-1/2 left-1/2 bg-black/95 text-white px-10 py-12 rounded-3xl font-bold text-[7.5vw] opacity-0 z-50 border-8 border-emerald-500 text-center whitespace-nowrap leading-none flex items-center justify-center">
+    <!-- 通知トースト -->
+    <div id="autoNextToast" class="fixed top-1/2 left-1/2 bg-black/95 text-white px-10 py-12 rounded-3xl font-bold opacity-0 z-50 border-8 border-emerald-500 text-center whitespace-nowrap leading-none flex items-center justify-center">
         ---
     </div>
 
-    <!-- 左上に教科名を表示 -->
+    <!-- 教科名表示 -->
     <div class="absolute top-32 left-10 z-20">
         <h1 id="displaySubject" class="text-[4.5vw] font-bold text-slate-300 tracking-wider leading-none border-l-8 border-emerald-500 pl-4">---</h1>
     </div>
 
-    <!-- 上部：教科選択タブ -->
+    <!-- 上部タブ -->
     <div id="subjectTabs" class="w-full flex justify-center gap-2 bg-black/10"></div>
 
-    <!-- 中央：メインタイマー -->
+    <!-- メインタイマーエリア -->
     <div class="w-full flex flex-col items-center flex-1 justify-center px-4 relative">
         <div class="text-center w-full z-10 mb-8">
             <div id="partTabs" class="flex justify-center gap-6"></div>
         </div>
-
         <div class="relative flex flex-col items-center justify-center w-full max-w-7xl">
             <div id="timeDisplay" class="text-[26vw] timer-display tracking-normal z-0">00:00</div>
         </div>
     </div>
 
-    <!-- 進捗バー -->
+    <!-- プログレスバー -->
     <div class="progress-container">
         <div class="progress-grid"></div>
         <div id="progressLine" class="h-full bg-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.6)] relative z-10 rounded-r-full" style="width: 100%;"></div>
     </div>
 
-    <!-- 下部：操作エリア -->
+    <!-- 下部操作エリア -->
     <div class="w-full control-panel py-4 px-10 grid grid-cols-3 items-center">
         <div class="flex items-center gap-6">
             <button onclick="openSettings()" class="text-slate-500 hover:text-white transition" title="設定">
@@ -171,7 +194,7 @@
         </div>
 
         <div class="flex justify-end items-center">
-            <span class="text-[16px] text-slate-600 font-medium tracking-tight select-none hover:text-slate-500 transition cursor-default">
+            <span class="text-[10px] text-slate-600 font-medium tracking-tight select-none hover:text-slate-500 transition cursor-default">
                 © 2026 Takayuki WAYAMA. All rights reserved.
             </span>
         </div>
@@ -192,8 +215,9 @@
             { name: "外国語", parts: [0, 0, 0, 0, 0], partLabels: [...defaultLabels], partNotifies: defaultLabels.map(l => l + defaultNotifyText) }
         ];
 
-        let examData = JSON.parse(localStorage.getItem('exam_data_v5')) || defaultData;
-        let autoNextNotify = JSON.parse(localStorage.getItem('exam_notify_settings')) ?? true;
+        let examData = JSON.parse(localStorage.getItem('exam_data_v7')) || defaultData;
+        let autoNextNotify = JSON.parse(localStorage.getItem('exam_notify_enabled')) ?? true;
+        let notifyDuration = JSON.parse(localStorage.getItem('exam_notify_duration')) ?? 8;
 
         let currentSubjectIdx = 0;
         let currentPartIdx = 0;
@@ -214,6 +238,7 @@
         const subjectSettingsList = document.getElementById('subjectSettingsList');
         const autoNextToast = document.getElementById('autoNextToast');
         const notifyToggle = document.getElementById('edit-notify-toggle');
+        const notifyDurInput = document.getElementById('edit-notify-duration');
 
         function init() {
             renderSubjectTabs();
@@ -245,6 +270,8 @@
 
         function renderSettings() {
             notifyToggle.checked = autoNextNotify;
+            notifyDurInput.value = notifyDuration;
+            
             subjectSettingsList.innerHTML = examData.map((s, i) => `
                 <div class="bg-slate-700/40 p-4 rounded border border-slate-600 text-left">
                     <div class="flex items-center gap-4 mb-4">
@@ -259,14 +286,13 @@
                                     <input type="text" id="edit-label-${i}-${pi}" value="${s.partLabels ? s.partLabels[pi] : defaultLabels[pi]}" class="w-full bg-slate-900 border border-slate-500 rounded px-1 py-1 text-white text-[10px]">
                                     
                                     <div class="${pi === 0 ? 'invisible opacity-0' : ''} h-12">
-                                        <label class="block text-[10px] text-slate-400 mt-2">通知文</label>
-                                        <input type="text" id="edit-notify-${i}-${pi}" value="${s.partNotifies ? s.partNotifies[pi] : (s.partLabels[pi] + defaultNotifyText)}" class="w-full bg-slate-900 border border-slate-500 rounded px-1 py-1 text-white text-[10px]" ${pi === 0 ? 'disabled' : ''}>
+                                        <label class="block text-[10px] text-slate-400 mt-2">通知文 (最大13文字)</label>
+                                        <input type="text" id="edit-notify-${i}-${pi}" maxlength="13" value="${s.partNotifies ? s.partNotifies[pi] : (s.partLabels[pi] + defaultNotifyText)}" class="w-full bg-slate-900 border border-slate-500 rounded px-1 py-1 text-white text-[10px]" ${pi === 0 ? 'disabled' : ''}>
                                     </div>
                                 </div>
-
                                 <div>
                                     <label class="block text-[10px] text-slate-400 mt-2">時間(分)</label>
-                                    <input type="number" id="edit-time-${i}-${pi}" value="${s.parts[pi]}" class="w-full bg-slate-900 border border-slate-500 rounded px-1 py-1 text-white text-center font-bold">
+                                    <input type="number" id="edit-time-${i}-${pi}" value="${s.parts[pi]}" class="w-full number-input w-full text-center">
                                 </div>
                             </div>
                         `).join('')}
@@ -334,13 +360,9 @@
 
         function toggleTimer() {
             if (!audioUnlocked) {
-                chime.play().then(() => {
-                    chime.pause();
-                    chime.currentTime = 0;
-                    audioUnlocked = true;
-                }).catch(e => console.log("Audio unlock failed:", e));
+                chime.play().then(() => { chime.pause(); chime.currentTime = 0; audioUnlocked = true; })
+                .catch(e => console.log("Audio unlock failed:", e));
             }
-
             if (isRunning) pauseTimer();
             else startTimer();
         }
@@ -350,14 +372,10 @@
             isRunning = true;
             toggleBtn.innerText = "PAUSE";
             toggleBtn.style.color = "#ffffff";
-
             timerId = setInterval(() => {
                 timeLeft--;
                 renderTime();
-                
-                if (timeLeft === 0) {
-                    handlePartCompletion();
-                }
+                if (timeLeft === 0) handlePartCompletion();
             }, 1000);
         }
 
@@ -366,18 +384,14 @@
             const currentNotifies = examData[currentSubjectIdx].partNotifies || [];
             let nextPartIdx = -1;
             for (let i = currentPartIdx + 1; i < currentParts.length; i++) {
-                if (currentParts[i] > 0) {
-                    nextPartIdx = i;
-                    break;
-                }
+                if (currentParts[i] > 0) { nextPartIdx = i; break; }
             }
 
             if (nextPartIdx !== -1) {
                 if (autoNextNotify) {
                     const msg = currentNotifies[nextPartIdx] || (examData[currentSubjectIdx].partLabels[nextPartIdx] + defaultNotifyText);
-                    showToast(msg, 8000);
+                    showToast(msg, notifyDuration * 1000);
                 }
-                
                 pauseTimer();
                 currentPartIdx = nextPartIdx;
                 updateExamDisplay();
@@ -426,13 +440,16 @@
                 partLabels: [0, 1, 2, 3, 4].map(pi => document.getElementById(`edit-label-${i}-${pi}`).value || defaultLabels[pi]),
                 partNotifies: [0, 1, 2, 3, 4].map(pi => {
                     if (pi === 0) return "";
-                    return document.getElementById(`edit-notify-${i}-${pi}`).value || (document.getElementById(`edit-label-${i}-${pi}`).value + defaultNotifyText);
+                    let val = document.getElementById(`edit-notify-${i}-${pi}`).value;
+                    return val.substring(0, 13) || (document.getElementById(`edit-label-${i}-${pi}`).value + defaultNotifyText).substring(0, 13);
                 })
             }));
-            localStorage.setItem('exam_data_v5', JSON.stringify(examData));
+            localStorage.setItem('exam_data_v7', JSON.stringify(examData));
 
             autoNextNotify = notifyToggle.checked;
-            localStorage.setItem('exam_notify_settings', JSON.stringify(autoNextNotify));
+            notifyDuration = parseInt(notifyDurInput.value) || 8;
+            localStorage.setItem('exam_notify_enabled', JSON.stringify(autoNextNotify));
+            localStorage.setItem('exam_notify_duration', JSON.stringify(notifyDuration));
 
             document.getElementById('settingsModal').classList.add('hidden');
             renderSubjectTabs();
