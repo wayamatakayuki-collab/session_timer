@@ -92,17 +92,16 @@
         }
 
         .custom-checkbox {
-            width: 24px;
-            height: 24px;
+            width: 20px;
+            height: 20px;
             cursor: pointer;
             accent-color: #10b981;
         }
 
-        /* 数値入力欄のスタイル */
         .number-input {
-            background-color: #f1f5f9; /* slate-100 */
-            color: #0f172a; /* slate-900 */
-            border: 1px solid #94a3b8; /* slate-400 */
+            background-color: #f1f5f9;
+            color: #0f172a;
+            border: 1px solid #94a3b8;
             border-radius: 4px;
             padding: 2px 8px;
             font-weight: bold;
@@ -117,18 +116,11 @@
             <h2 class="text-2xl font-bold mb-4 text-center pb-4 border-b border-slate-700">詳細設定</h2>
             
             <div id="settingsContainer" class="flex-1 overflow-y-auto space-y-4 pr-2 text-slate-200">
-                <!-- 全体通知設定 -->
+                <!-- 通知の基本設定 -->
                 <div class="bg-slate-700/60 p-4 rounded border border-emerald-500/30 mb-6 flex flex-wrap items-center justify-between gap-4">
                     <div class="flex items-center gap-8">
                         <div>
-                            <h3 class="font-bold text-emerald-400">通知の有効化</h3>
-                            <div class="flex items-center gap-3 mt-1">
-                                <input type="checkbox" id="edit-notify-toggle" class="custom-checkbox">
-                                <span class="text-sm">通知を表示する</span>
-                            </div>
-                        </div>
-                        <div class="border-l border-slate-600 pl-8">
-                            <h3 class="font-bold text-emerald-400">表示時間</h3>
+                            <h3 class="font-bold text-emerald-400">通知表示設定</h3>
                             <div class="flex items-center gap-2 mt-1">
                                 <input type="number" id="edit-notify-duration" min="1" max="30" class="w-16 number-input text-center">
                                 <span class="text-sm">秒間表示する</span>
@@ -136,7 +128,7 @@
                         </div>
                     </div>
                     <div class="text-[10px] text-slate-400">
-                        ※通知文は最大13文字まで入力可能です。
+                        ※通知文は最大13文字まで入力可能です。各部ごとのチェックボックスで通知の有無を切り替えられます。
                     </div>
                 </div>
 
@@ -154,9 +146,9 @@
         ---
     </div>
 
-    <!-- 教科名表示 -->
-    <div class="absolute top-32 left-10 z-20">
-        <h1 id="displaySubject" class="text-[4.5vw] font-bold text-slate-300 tracking-wider leading-none border-l-8 border-emerald-500 pl-4">---</h1>
+    <!-- 教科名表示 (重なりを防ぐために位置を調整) -->
+    <div class="absolute top-20 left-10 z-20">
+        <h1 id="displaySubject" class="text-[4vw] font-bold text-slate-300 tracking-wider leading-none border-l-8 border-emerald-500 pl-4">---</h1>
     </div>
 
     <!-- 上部タブ -->
@@ -208,16 +200,15 @@
         const defaultLabels = ["第1部", "第2部", "第3部", "第4部", "第5部"];
         const defaultNotifyText = "に進んでください";
         const defaultData = [
-            { name: "国語", parts: [0, 0, 0, 0, 0], partLabels: [...defaultLabels], partNotifies: defaultLabels.map(l => l + defaultNotifyText) },
-            { name: "社会", parts: [0, 0, 0, 0, 0], partLabels: [...defaultLabels], partNotifies: defaultLabels.map(l => l + defaultNotifyText) },
-            { name: "算数", parts: [0, 0, 0, 0, 0], partLabels: [...defaultLabels], partNotifies: defaultLabels.map(l => l + defaultNotifyText) },
-            { name: "理科", parts: [0, 0, 0, 0, 0], partLabels: [...defaultLabels], partNotifies: defaultLabels.map(l => l + defaultNotifyText) },
-            { name: "外国語", parts: [0, 0, 0, 0, 0], partLabels: [...defaultLabels], partNotifies: defaultLabels.map(l => l + defaultNotifyText) }
+            { name: "国語", parts: [0, 0, 0, 0, 0], partLabels: [...defaultLabels], partNotifies: defaultLabels.map(l => l + defaultNotifyText), partNotifyStates: [false, true, true, true, true] },
+            { name: "社会", parts: [0, 0, 0, 0, 0], partLabels: [...defaultLabels], partNotifies: defaultLabels.map(l => l + defaultNotifyText), partNotifyStates: [false, true, true, true, true] },
+            { name: "算数", parts: [0, 0, 0, 0, 0], partLabels: [...defaultLabels], partNotifies: defaultLabels.map(l => l + defaultNotifyText), partNotifyStates: [false, true, true, true, true] },
+            { name: "理科", parts: [0, 0, 0, 0, 0], partLabels: [...defaultLabels], partNotifies: defaultLabels.map(l => l + defaultNotifyText), partNotifyStates: [false, true, true, true, true] },
+            { name: "外国語", parts: [0, 0, 0, 0, 0], partLabels: [...defaultLabels], partNotifies: defaultLabels.map(l => l + defaultNotifyText), partNotifyStates: [false, true, true, true, true] }
         ];
 
-        let examData = JSON.parse(localStorage.getItem('exam_data_v7')) || defaultData;
-        let autoNextNotify = JSON.parse(localStorage.getItem('exam_notify_enabled')) ?? true;
-        let notifyDuration = JSON.parse(localStorage.getItem('exam_notify_duration')) ?? 8;
+        let examData = JSON.parse(localStorage.getItem('exam_data_v8')) || defaultData;
+        let notifyDuration = JSON.parse(localStorage.getItem('exam_notify_duration')) ?? 5;
 
         let currentSubjectIdx = 0;
         let currentPartIdx = 0;
@@ -237,7 +228,6 @@
         const chime = document.getElementById('chime');
         const subjectSettingsList = document.getElementById('subjectSettingsList');
         const autoNextToast = document.getElementById('autoNextToast');
-        const notifyToggle = document.getElementById('edit-notify-toggle');
         const notifyDurInput = document.getElementById('edit-notify-duration');
 
         function init() {
@@ -268,21 +258,36 @@
             }).join('');
         }
 
+        function bulkToggleNotify(subjectIdx, state) {
+            for (let pi = 1; pi < 5; pi++) {
+                const el = document.getElementById(`edit-notify-state-${subjectIdx}-${pi}`);
+                if (el) el.checked = state;
+            }
+        }
+
         function renderSettings() {
-            notifyToggle.checked = autoNextNotify;
             notifyDurInput.value = notifyDuration;
             
             subjectSettingsList.innerHTML = examData.map((s, i) => `
                 <div class="bg-slate-700/40 p-4 rounded border border-slate-600 text-left">
-                    <div class="flex items-center gap-4 mb-4">
-                        <span class="text-sm font-bold">教科名</span>
-                        <input type="text" id="edit-name-${i}" value="${s.name}" class="bg-slate-900 border border-slate-500 rounded px-2 py-1 text-white flex-1">
+                    <div class="flex items-center justify-between mb-4 border-b border-slate-600 pb-2">
+                        <div class="flex items-center gap-4 flex-1">
+                            <span class="text-sm font-bold">教科名</span>
+                            <input type="text" id="edit-name-${i}" value="${s.name}" class="bg-slate-900 border border-slate-500 rounded px-2 py-1 text-white w-48">
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="bulkToggleNotify(${i}, true)" class="text-[10px] bg-emerald-900/50 hover:bg-emerald-800 px-2 py-1 rounded border border-emerald-700 transition">通知を全選択</button>
+                            <button onclick="bulkToggleNotify(${i}, false)" class="text-[10px] bg-slate-800 hover:bg-slate-700 px-2 py-1 rounded border border-slate-600 transition">全解除</button>
+                        </div>
                     </div>
                     <div class="grid grid-cols-5 gap-3">
                         ${[0,1,2,3,4].map(pi => `
                             <div class="space-y-1 bg-slate-800/50 p-2 rounded border border-slate-700/50 flex flex-col justify-between h-full">
                                 <div>
-                                    <label class="block text-[10px] text-slate-400">名称</label>
+                                    <div class="flex items-center justify-between">
+                                        <label class="block text-[10px] text-slate-400">名称</label>
+                                        ${pi > 0 ? `<input type="checkbox" id="edit-notify-state-${i}-${pi}" class="custom-checkbox w-3 h-3" ${s.partNotifyStates && s.partNotifyStates[pi] ? 'checked' : ''} title="通知の有無">` : ''}
+                                    </div>
                                     <input type="text" id="edit-label-${i}-${pi}" value="${s.partLabels ? s.partLabels[pi] : defaultLabels[pi]}" class="w-full bg-slate-900 border border-slate-500 rounded px-1 py-1 text-white text-[10px]">
                                     
                                     <div class="${pi === 0 ? 'invisible opacity-0' : ''} h-12">
@@ -380,16 +385,20 @@
         }
 
         function handlePartCompletion() {
-            const currentParts = examData[currentSubjectIdx].parts;
-            const currentNotifies = examData[currentSubjectIdx].partNotifies || [];
+            const subject = examData[currentSubjectIdx];
+            const currentParts = subject.parts;
+            const currentNotifies = subject.partNotifies || [];
+            const currentNotifyStates = subject.partNotifyStates || [false, true, true, true, true];
+            
             let nextPartIdx = -1;
             for (let i = currentPartIdx + 1; i < currentParts.length; i++) {
                 if (currentParts[i] > 0) { nextPartIdx = i; break; }
             }
 
             if (nextPartIdx !== -1) {
-                if (autoNextNotify) {
-                    const msg = currentNotifies[nextPartIdx] || (examData[currentSubjectIdx].partLabels[nextPartIdx] + defaultNotifyText);
+                // その部の通知設定がONの場合のみ表示
+                if (currentNotifyStates[nextPartIdx]) {
+                    const msg = currentNotifies[nextPartIdx] || (subject.partLabels[nextPartIdx] + defaultNotifyText);
                     showToast(msg, notifyDuration * 1000);
                 }
                 pauseTimer();
@@ -442,13 +451,15 @@
                     if (pi === 0) return "";
                     let val = document.getElementById(`edit-notify-${i}-${pi}`).value;
                     return val.substring(0, 13) || (document.getElementById(`edit-label-${i}-${pi}`).value + defaultNotifyText).substring(0, 13);
+                }),
+                partNotifyStates: [0, 1, 2, 3, 4].map(pi => {
+                    if (pi === 0) return false;
+                    return document.getElementById(`edit-notify-state-${i}-${pi}`).checked;
                 })
             }));
-            localStorage.setItem('exam_data_v7', JSON.stringify(examData));
+            localStorage.setItem('exam_data_v8', JSON.stringify(examData));
 
-            autoNextNotify = notifyToggle.checked;
-            notifyDuration = parseInt(notifyDurInput.value) || 8;
-            localStorage.setItem('exam_notify_enabled', JSON.stringify(autoNextNotify));
+            notifyDuration = parseInt(notifyDurInput.value) || 5;
             localStorage.setItem('exam_notify_duration', JSON.stringify(notifyDuration));
 
             document.getElementById('settingsModal').classList.add('hidden');
