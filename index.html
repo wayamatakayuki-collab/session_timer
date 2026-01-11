@@ -226,11 +226,11 @@
         const defaultLabels = ["第1部", "第2部", "第3部", "第4部", "第5部"];
         const defaultNotifyText = "に進んでください";
         const defaultData = [
-            { name: "国語", parts: [45, 0, 0, 0, 0], partLabels: [...defaultLabels], partNotifies: defaultLabels.map(l => l + defaultNotifyText), partNotifyStates: [false, false, false, false, false] },
-            { name: "社会", parts: [40, 0, 0, 0, 0], partLabels: [...defaultLabels], partNotifies: defaultLabels.map(l => l + defaultNotifyText), partNotifyStates: [false, false, false, false, false] },
-            { name: "算数", parts: [45, 0, 0, 0, 0], partLabels: [...defaultLabels], partNotifies: defaultLabels.map(l => l + defaultNotifyText), partNotifyStates: [false, false, false, false, false] },
-            { name: "理科", parts: [40, 0, 0, 0, 0], partLabels: [...defaultLabels], partNotifies: defaultLabels.map(l => l + defaultNotifyText), partNotifyStates: [false, false, false, false, false] },
-            { name: "外国語", parts: [40, 0, 0, 0, 0], partLabels: [...defaultLabels], partNotifies: defaultLabels.map(l => l + defaultNotifyText), partNotifyStates: [false, false, false, false, false] }
+            { name: "国語", parts: [0, 0, 0, 0, 0], partLabels: [...defaultLabels], partNotifies: defaultLabels.map(l => l + defaultNotifyText), partNotifyStates: [false, false, false, false, false] },
+            { name: "社会", parts: [0, 0, 0, 0, 0], partLabels: [...defaultLabels], partNotifies: defaultLabels.map(l => l + defaultNotifyText), partNotifyStates: [false, false, false, false, false] },
+            { name: "算数", parts: [0, 0, 0, 0, 0], partLabels: [...defaultLabels], partNotifies: defaultLabels.map(l => l + defaultNotifyText), partNotifyStates: [false, false, false, false, false] },
+            { name: "理科", parts: [0, 0, 0, 0, 0], partLabels: [...defaultLabels], partNotifies: defaultLabels.map(l => l + defaultNotifyText), partNotifyStates: [false, false, false, false, false] },
+            { name: "外国語", parts: [0, 0, 0, 0, 0], partLabels: [...defaultLabels], partNotifies: defaultLabels.map(l => l + defaultNotifyText), partNotifyStates: [false, false, false, false, false] }
         ];
 
         let examData = JSON.parse(localStorage.getItem('exam_data_v11')) || defaultData;
